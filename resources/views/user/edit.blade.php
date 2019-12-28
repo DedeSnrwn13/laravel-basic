@@ -8,12 +8,20 @@
         <h4 class="mb-0">Edit User</h4>
       </div>
       <div class="card-body">
-        <form action="{{ route('user.update') }}" method="POST">
+        <form action="{{ route('user.update') }}" method="POST" enctype="multipart/form-data">
           @csrf
           {{ method_field('PUT') }}
           <input type="hidden" name="id" value="{{ $user->id }}">
 
           <div class="row">
+            <div class="form-group col-md-12">
+              <label for="name" class="col-form-label">Profile</label>
+              <input type="file" class="form-control form-control-file @error('profile') is-invalid @enderror" id="profile" name="profile" accept="image/*">
+              @error('profile')
+                <span class="invalid-feedback">{{ $message }}</span>
+              @enderror
+            </div>
+
             <div class="form-group col-md-6">
             <label for="name" class="col-form-label">Name</label>
             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ $user->name }}">

@@ -24,6 +24,7 @@
         <thead class="bg-primary text-white">
           <tr>
             <th>No</th>
+            <th>profile</th>
             <th>Name</th>
             <th>Email</th>
             <th>Address</th>
@@ -38,6 +39,9 @@
           @foreach($users as $key => $user)
             <tr>
               <td>{{ $key + 1 }}</td>
+              <td>
+                <img src="{{ $user->profile ? URL::to('storage/user/images', $user->profile) : asset('images/default.png') }}" alt="" height="70">
+              </td>
               <td>{{ $user->name }}</td>
               <td>{{ $user->email }}</td>
               <td>{{ $user->address }}</td>
@@ -46,12 +50,12 @@
               <td>{{ \Carbon\Carbon::parse($user->born)->diffForHumans(null, true) }}</td>
               <td>{{ $user->hobby }}</td>
               <td>
-                <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm text-white">Edit</a>
+                <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm text-white float-left">Edit</a>
                 <form method="POST" action="{{ route('user.delete') }}" class="float-left">
                   @csrf 
                   {{ method_field('DELETE') }}
                   <input type="hidden" name="id" value="{{ $user->id }}">
-                  <button type="submit" class="btn btn-danger btn-sm text-white ml-2">Delete</button>
+                  <button type="submit" class="btn btn-danger btn-sm text-white ml-2 float-right">Delete</button>
 
                 </form>
               </td>

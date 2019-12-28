@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
+use Storage;
 
 class UserController extends Controller
 {
@@ -41,10 +43,23 @@ class UserController extends Controller
         'born' => 'required|date',
         'hobby' => 'required|string',
         'phone' => 'required|string',
-        'password' => 'required|string|confirmed'
+        'password' => 'required|string|confirmed',
+        'profile' => 'required|file|image'
+
       ]);
 
-      User::create($request->all());
+      $user = (object) $request->all();
+      $file = $request->file('profile');
+      $filename = sha1($file->getClientOriginalName() . Carbon::now() . mt_rand()). '.'.$file->getClientOriginalExtension();
+      $file->storeAs('public/user/images', $filename);
+      $user->password = bcrypt($request->$filename);
+      $user->profile = $filename;
+
+      User::create((array) $user);
+
+      // $user
+      // return $user
+
 
       return redirect()->route('user.index')->with('success','Successfully created new user');
     }
@@ -74,6 +89,23 @@ class UserController extends Controller
         // 'password' => 'required|string|confirmed',
       ]);
 
+      if($request->profile) {
+        $request->validate( ['profile' => 'required|file|image'] );
+
+
+        $file = $request->file('profile');
+        $filename = sha1($file->getClientOriginalName() . Carbon::now() . mt_rand()). '.'.$file->getClientOriginalExtension();
+        $file->storeAs('public/user/images', $filename);
+
+        $path ='public/user/images'. $user->profile;
+
+        if(Storage::exists($path)) {
+           Storage::delete($path);
+        }
+
+        $user->profile = $filename;
+      }
+
       if($request->password) {
 
         $request->validate(['password' => 'required|string|confirmed']);
@@ -99,6 +131,12 @@ class UserController extends Controller
     public function delete(Request $request) {
       $user = User::findOrFail($request->id);
       $user->delete();
+
+      $path ='public/user/images'. $user->profile;
+
+      if(Storage::exists($path)) {
+         Storage::delete($path);
+      }
       return redirect()->route('user.index')->withSuccess('Successfully deleting user');
 
     }
