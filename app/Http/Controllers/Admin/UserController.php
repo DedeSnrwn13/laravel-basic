@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use Storage;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -21,18 +22,18 @@ class UserController extends Controller
                  ->orWhere('phone','LIKE','%'. $key .'%')
                  ->orWhere('born','LIKE','%'. $key .'%')
                  ->orWhere('hobby','LIKE','%'. $key .'%')
-                 ->paginate(2);
+                 ->paginate(5);
       } else {
-        $users = User::paginate(2);
+        $users = User::paginate(5);
       }
 
       
-      return view('user.index', compact('users'));
+      return view('admin.user.index', compact('users'));
     }
 
     public function create() {
        
-      return view('user.create');
+      return view('admin.user.create');
     }
 
     public function store(Request $request){
@@ -61,12 +62,12 @@ class UserController extends Controller
       // return $user
 
 
-      return redirect()->route('user.index')->with('success','Successfully created new user');
+      return redirect()->route('admin.user.index')->with('success','Successfully created new user');
     }
 
     public function edit($id) {
       $user = User::findOrFail($id);
-      return view('user.edit', compact('user'));
+      return view('.admin.user.edit', compact('user'));
     }
 
     public function update(Request $request) {
@@ -137,7 +138,7 @@ class UserController extends Controller
       if(Storage::exists($path)) {
          Storage::delete($path);
       }
-      return redirect()->route('user.index')->withSuccess('Successfully deleting user');
+      return redirect()->route('admin.user.index')->withSuccess('Successfully deleting user');
 
     }
 

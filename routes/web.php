@@ -19,15 +19,25 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::prefix('/user')->name('user.')->group(function() {
-
-	Route::get('/','UserController@index')->name('index');
-	Route::get('/create', 'UserController@create')->name('create');
-	Route::post('/ceate', 'UserController@store')->name('store');
-
-	Route::get('/user/{id}', 'UserController@edit')->name('edit');
-	Route::put('/update', 'UserController@update')->name('update');
-	Route::delete('/delete', 'UserController@delete')->name('delete');
-
-
+Route::prefix('/admin')->name('admin.')->group(function() {
+	Route::prefix('/user')->name('user.')->group(function() {
+		Route::get('/','Admin\UserController@index')->name('index');
+		Route::get('/create', 'UserController@create')->name('create');
+		Route::post('/ceate', 'UserController@store')->name('store');	
+		Route::get('/user/{id}', 'UserController@edit')->name('edit');
+		Route::put('/update', 'UserController@update')->name('update');
+		Route::delete('/delete', 'UserController@delete')->name('delete');
+	
+	
+	});
 });
+
+
+/**
+ * Handling user routing
+ */
+
+ Route::prefix('/user')->name('user.')->group(function() {
+
+ });
+
